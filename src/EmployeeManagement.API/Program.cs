@@ -3,10 +3,9 @@ using EmployeeManagement.API.Middleware;
 using EmployeeManagement.API.Services.Lifetimes;
 using EmployeeManagement.Application;
 using EmployeeManagement.Domain.Contracts;
-using EmployeeManagement.Domain.Entities;
-using EmployeeManagement.Domain.Repositories;
 using EmployeeManagement.Domain.Services;
-using EmployeeManagement.Domain.ValueObjects;
+using EmployeeManagement.Infrastructure;
+using EmployeeManagement.Infrastructure.Data;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +21,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Employee & Department Management API",
         Version = "v1",
-        Description = "ASP.NET Core 8.0 REST API with Layered Architecture, FluentValidation, DI Lifetimes, and RFC 7807 Exception Handling.",
+        Description = "ASP.NET Core 8.0 REST API with EF Core, SQL Server, Layered Architecture, FluentValidation, and RFC 7807 Exception Handling.",
         Contact = new OpenApiContact
         {
             Name = "Shanmukha-Sai",
@@ -39,18 +38,27 @@ builder.Services.AddTransient<IOperationTransient, OperationService>();
 builder.Services.AddScoped<IOperationScoped, OperationService>();
 builder.Services.AddSingleton<IOperationSingleton, OperationService>();
 
-// Domain Services & Repositories
-var employeeRepository = new InMemoryEmployeeRepository();
-SeedInitialData(employeeRepository);
-
-builder.Services.AddSingleton<IEmployeeRepository>(employeeRepository);
+// Domain Services
 builder.Services.AddScoped<IPayrollCalculator, StandardPayrollCalculator>();
 builder.Services.AddTransient<LinqQueryService>();
 
-// Register Application Layer (FluentValidation + Services)
+// Register Application & Infrastructure Layers
 builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
+
+// Seed Database on startup if available
+try
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<EmployeeManagementDbContext>();
+    await DatabaseSeeder.SeedAsync(dbContext);
+}
+catch (Exception ex)
+{
+    app.Logger.LogWarning("SQL Server automatic seeding skipped: {Message}", ex.Message);
+}
 
 // 5. Configure the HTTP Request Pipeline (Order is critical!)
 // 1) Custom Request Logging Middleware runs earliest to capture total elapsed time and assign X-Correlation-Id
@@ -74,47 +82,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-static void SeedInitialData(IEmployeeRepository repository)
-{
-    repository.Add(new FullTimeEmployee(
-        id: 101,
-        name: "Alice Johnson",
-        email: "alice.johnson@company.com",
-        departmentId: 1,
-        annualSalary: 120000m,
-        monthlyBenefitsAllowance: 800m,
-        address: new Address("100 Tech Way", "Seattle", "WA", "98101")
-    ));
-
-    repository.Add(new ContractEmployee(
-        id: 102,
-        name: "Bob Martin",
-        email: "bob.martin@contractor.com",
-        departmentId: 1,
-        hourlyRate: 85m,
-        hoursWorkedThisMonth: 160,
-        contractEndDate: DateTime.UtcNow.AddMonths(6),
-        address: new Address("200 Contract Blvd", "Portland", "OR", "97201")
-    ));
-
-    repository.Add(new FullTimeEmployee(
-        id: 103,
-        name: "Carol White",
-        email: "carol.white@company.com",
-        departmentId: 2,
-        annualSalary: 85000m,
-        monthlyBenefitsAllowance: 500m,
-        address: new Address("300 People St", "Austin", "TX", "73301")
-    ));
-
-    repository.Add(new FullTimeEmployee(
-        id: 104,
-        name: "David Kim",
-        email: "david.kim@company.com",
-        departmentId: 1,
-        annualSalary: 145000m,
-        monthlyBenefitsAllowance: 1000m,
-        address: new Address("400 Cloud Ave", "Bellevue", "WA", "98004")
-    ));
-}

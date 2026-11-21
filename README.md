@@ -22,6 +22,7 @@ D:\sai\dotnet\
 ├── DAY06_README.md                            # Day 6: ASP.NET Core Web API & REST CRUD
 ├── DAY07_README.md                            # Day 7: DI Lifetimes & Custom Middleware
 ├── DAY08_README.md                            # Day 8: Layered Architecture & Validation
+├── DAY09_README.md                            # Day 9: EF Core 8.0 & SQL Server Integration
 ├── EmployeeManagement.sln                     # Main Visual Studio Solution
 │
 ├── src/
@@ -46,11 +47,21 @@ D:\sai\dotnet\
 │   │
 │   ├── EmployeeManagement.Application/        # Application Layer (Use Cases & Validation)
 │   │   ├── Common/Exceptions/                 # AppException, ValidationException, NotFoundException, etc.
-│   │   ├── DTOs/                              # Validated Request/Response DTOs
+│   │   ├── DTOs/                              # Validated Request/Response DTOs & PaginationParams
 │   │   ├── Interfaces/                        # IEmployeeService, IDepartmentService
 │   │   ├── Services/                          # EmployeeService, DepartmentService
 │   │   ├── Validators/                        # FluentValidation Rules (Create, Update, Patch)
 │   │   └── DependencyInjection.cs             # services.AddApplication() Extension
+│   │
+│   ├── EmployeeManagement.Infrastructure/     # Infrastructure Layer (EF Core & Data Access)
+│   │   ├── Data/
+│   │   │   ├── EmployeeManagementDbContext.cs # EF Core DbContext with TPH & Owned Types
+│   │   │   ├── DatabaseSeeder.cs              # Initial DB Seeding for Departments & Employees
+│   │   │   └── Configurations/                # Entity Configurations (Fluent API)
+│   │   ├── Repositories/
+│   │   │   └── SqlEmployeeRepository.cs       # EF Core IEmployeeRepository with AsNoTracking & Pagination
+│   │   ├── Migrations/                        # Code-First EF Core Migrations (InitialCreate)
+│   │   └── DependencyInjection.cs             # services.AddInfrastructure() Extension
 │   │
 │   ├── EmployeeManagement.Domain/             # Core Domain Model & Business Logic
 │   │   ├── Common/
@@ -100,13 +111,16 @@ D:\sai\dotnet\
 │       └── Program.cs                         # Interactive CLI & Demo runner
 │
 └── tests/
-    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (94 Passing Tests)
+    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (106 Passing Tests)
         ├── ApiTests/
         │   └── EmployeesControllerTests.cs    # Thin Controller async delegation & status tests
         ├── ApplicationTests/
         │   ├── CreateEmployeeRequestValidatorTests.cs # FluentValidation rules & boundary tests
         │   ├── EmployeeServiceTests.cs        # Application Service CRUD, uniqueness & exception tests
         │   └── GlobalExceptionHandlingMiddlewareTests.cs # RFC 7807 ProblemDetails mapping tests
+        ├── InfrastructureTests/
+        │   ├── SqlEmployeeRepositoryTests.cs  # EF Core queries, AsNoTracking, mutations & pagination
+        │   └── DepartmentRelationshipTests.cs # 1-to-many relationship navigation & cascade tests
         ├── DiAndMiddlewareTests/
         │   ├── ServiceLifetimeTests.cs        # Transient, Scoped, Singleton tests
         │   └── RequestLoggingMiddlewareTests.cs # Correlation ID & pipeline tests
@@ -138,7 +152,8 @@ D:\sai\dotnet\
 | **Day 6** | **ASP.NET Core REST API Basics**| Web API project, Employees & Departments CRUD (GET/POST/PUT/PATCH/DELETE), DTOs, Swagger, .http file, 58 tests | **Completed** ✅ |
 | **Day 7** | **Dependency Injection & Middleware**| Built-in DI lifetimes (Transient/Scoped/Singleton), Custom logging middleware, IOptions configuration, 64 tests | **Completed** ✅ |
 | **Day 8** | **Layered Architecture & Validation**| Clean 3-Tier separation (API/Application/Domain), FluentValidation, Global Exception Handler (RFC 7807), 94 tests | **Completed** ✅ |
-| **Day 9** | **EF Core & SQL Integration**| DbContext, Entity configurations, SQL Server migrations, 1-to-many relationships, pagination | Next Up ⏳ |
+| **Day 9** | **EF Core & SQL Integration**| DbContext, Entity configurations, SQL Server migrations (InitialCreate), TPH inheritance, pagination, 106 tests | **Completed** ✅ |
+| **Day 10** | **Security, JWT & Gate 2 Checkpoint**| JWT Authentication & Authorization, Role policies (Admin/Manager), End-to-End Capstone Checkpoint | Next Up ⏳ |
 
 ---
 
@@ -149,7 +164,7 @@ D:\sai\dotnet\
 dotnet run --project "src/EmployeeManagement.API"
 ```
 
-### Run All 94 Unit Tests
+### Run All 106 Unit Tests
 ```powershell
 dotnet test
 ```

@@ -37,9 +37,13 @@ public abstract class Employee : BaseEntity
     }
 
     public int DepartmentId { get; set; }
+    public virtual Department? Department { get; set; }
     public Address? Address { get; set; }
     public abstract EmployeeType Type { get; }
     public bool IsActive { get; protected set; } = true;
+
+    // Parameterless constructor for EF Core entity materialization
+    protected Employee() : base() { }
 
     protected Employee(int id, string name, string email, int departmentId, Address? address = null) 
         : base(id)

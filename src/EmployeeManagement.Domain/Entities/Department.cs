@@ -19,6 +19,13 @@ public class Department : BaseEntity
     // Read-only collection exposed to callers (Encapsulation principle)
     public IReadOnlyCollection<Employee> Employees => _employees.AsReadOnly();
 
+    // Parameterless constructor for EF Core entity materialization
+    protected Department() : base()
+    {
+        Name = string.Empty;
+        Code = string.Empty;
+    }
+
     public Department(int id, string name, string code, decimal monthlyBudget) : base(id)
     {
         if (string.IsNullOrWhiteSpace(name))

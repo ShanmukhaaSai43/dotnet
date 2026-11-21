@@ -29,6 +29,18 @@ public class EmployeesController : ControllerBase
     }
 
     /// <summary>
+    /// GET /api/employees/paged - Server-side paginated, filtered, and sorted employee list.
+    /// Returns: 200 OK with PagedResult<EmployeeResponse>
+    /// </summary>
+    [HttpGet("paged")]
+    [ProducesResponseType(typeof(PagedResult<EmployeeResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPaged([FromQuery] PaginationParams pagination, CancellationToken cancellationToken = default)
+    {
+        var result = await _employeeService.GetPagedEmployeesAsync(pagination, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// GET /api/employees/{id} - Retrieves a single employee by unique ID.
     /// Returns: 200 OK or 404 Not Found (via GlobalExceptionHandler)
     /// </summary>
