@@ -89,3 +89,32 @@ Accept: application/json
 ### 14. [DAY 7] STRONGLY-TYPED CONFIGURATION (IOptions<PayrollSettings>)
 GET {{EmployeeManagement.API_HostAddress}}/api/diagnostics/configuration
 Accept: application/json
+
+### 15. [DAY 8] FLUENTVALIDATION FAILURE (400 Bad Request with RFC 7807 ValidationProblemDetails)
+POST {{EmployeeManagement.API_HostAddress}}/api/employees
+Content-Type: application/json
+
+{
+  "name": "Invalid@Name123",
+  "email": "not-a-valid-email",
+  "departmentId": -5,
+  "type": 1,
+  "salaryOrHourlyRate": 12000,
+  "zipCode": "123"
+}
+
+### 16. [DAY 8] CONFLICT EXCEPTION (409 Conflict with RFC 7807 ProblemDetails - Duplicate Email)
+POST {{EmployeeManagement.API_HostAddress}}/api/employees
+Content-Type: application/json
+
+{
+  "name": "Alice Duplicate",
+  "email": "alice.johnson@company.com",
+  "departmentId": 1,
+  "type": 1,
+  "salaryOrHourlyRate": 95000
+}
+
+### 17. [DAY 8] NOT FOUND EXCEPTION (404 Not Found with RFC 7807 ProblemDetails)
+GET {{EmployeeManagement.API_HostAddress}}/api/employees/88888
+Accept: application/json

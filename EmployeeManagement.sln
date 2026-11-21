@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.UnitTests", "tests\EmployeeManagement.UnitTests\EmployeeManagement.UnitTests.csproj", "{C9B56851-C56D-4890-95C0-E577F86B5DB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.API", "src\EmployeeManagement.API\EmployeeManagement.API.csproj", "{3883AB05-AB55-4DDD-B55D-1194E69C63D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.Application", "src\EmployeeManagement.Application\EmployeeManagement.Application.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,11 +42,16 @@ Global
 		{3883AB05-AB55-4DDD-B55D-1194E69C63D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3883AB05-AB55-4DDD-B55D-1194E69C63D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3883AB05-AB55-4DDD-B55D-1194E69C63D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6B79AA63-194D-497F-A84A-F595773917C1} = {F4A855D9-0E73-4E97-813C-ABCC6706AB60}
 		{79F15D67-C632-421E-B543-C105DD3CAE38} = {F4A855D9-0E73-4E97-813C-ABCC6706AB60}
 		{C9B56851-C56D-4890-95C0-E577F86B5DB5} = {DB2B2265-3600-4B32-A354-497F8A21AFD3}
 		{3883AB05-AB55-4DDD-B55D-1194E69C63D6} = {F4A855D9-0E73-4E97-813C-ABCC6706AB60}
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {F4A855D9-0E73-4E97-813C-ABCC6706AB60}
 	EndGlobalSection
 EndGlobal

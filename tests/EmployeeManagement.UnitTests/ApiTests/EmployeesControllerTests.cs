@@ -1,9 +1,14 @@
 using EmployeeManagement.API.Controllers;
-using EmployeeManagement.API.DTOs;
+using EmployeeManagement.Application.Common.Exceptions;
+using EmployeeManagement.Application.DTOs;
+using EmployeeManagement.Application.Interfaces;
+using EmployeeManagement.Application.Services;
+using EmployeeManagement.Application.Validators;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Entities;
 using EmployeeManagement.Domain.Enums;
 using EmployeeManagement.Domain.Repositories;
+using EmployeeManagement.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.UnitTests.ApiTests;
@@ -11,6 +16,7 @@ namespace EmployeeManagement.UnitTests.ApiTests;
 public class EmployeesControllerTests
 {
     private readonly IEmployeeRepository _repository;
+    private readonly IEmployeeService _service;
     private readonly EmployeesController _controller;
 
     public EmployeesControllerTests()
@@ -19,14 +25,22 @@ public class EmployeesControllerTests
         _repository.Add(new FullTimeEmployee(1, "Alice Test", "alice@test.com", 1, 120000m));
         _repository.Add(new ContractEmployee(2, "Bob Test", "bob@test.com", 1, hourlyRate: 70m, hoursWorkedThisMonth: 100, contractEndDate: DateTime.UtcNow.AddMonths(3)));
 
-        _controller = new EmployeesController(_repository);
+        _service = new EmployeeService(
+            _repository,
+            new StandardPayrollCalculator(),
+            new CreateEmployeeRequestValidator(),
+            new UpdateEmployeeRequestValidator(),
+            new PatchSalaryRequestValidator()
+        );
+
+        _controller = new EmployeesController(_service);
     }
 
     [Fact]
-    public void GetAll_ShouldReturn200OkWithEmployees()
+    public async Task GetAll_ShouldReturn200OkWithEmployees()
     {
         // Act
-        var result = _controller.GetAll();
+        var result = await _controller.GetAll();
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
@@ -35,10 +49,10 @@ public class EmployeesControllerTests
     }
 
     [Fact]
-    public void GetById_ExistingId_ShouldReturn200OkWithEmployee()
+    public async Task GetById_ExistingId_ShouldReturn200OkWithEmployee()
     {
         // Act
-        var result = _controller.GetById(1);
+        var result = await _controller.GetById(1);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
@@ -48,17 +62,14 @@ public class EmployeesControllerTests
     }
 
     [Fact]
-    public void GetById_NonExistingId_ShouldReturn404NotFound()
+    public async Task GetById_NonExistingId_ShouldThrowNotFoundException()
     {
-        // Act
-        var result = _controller.GetById(999);
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        // Act & Assert (Thin controller propagates domain/app exceptions to GlobalExceptionHandler)
+        await Assert.ThrowsAsync<NotFoundException>(() => _controller.GetById(999));
     }
 
     [Fact]
-    public void Create_ValidFullTimeEmployee_ShouldReturn201CreatedAtAction()
+    public async Task Create_ValidFullTimeEmployee_ShouldReturn201CreatedAtAction()
     {
         // Arrange
         var request = new CreateEmployeeRequest(
@@ -70,7 +81,7 @@ public class EmployeesControllerTests
         );
 
         // Act
-        var result = _controller.Create(request);
+        var result = await _controller.Create(request);
 
         // Assert
         var createdResult = Assert.IsType<CreatedAtActionResult>(result);
@@ -81,7 +92,7 @@ public class EmployeesControllerTests
     }
 
     [Fact]
-    public void Create_DuplicateEmail_ShouldReturn400BadRequest()
+    public async Task Create_DuplicateEmail_ShouldThrowConflictException()
     {
         // Arrange - attempting to insert with existing email 'alice@test.com'
         var duplicateRequest = new CreateEmployeeRequest(
@@ -92,18 +103,15 @@ public class EmployeesControllerTests
             SalaryOrHourlyRate: 95000m
         );
 
-        // Act
-        var result = _controller.Create(duplicateRequest);
-
-        // Assert
-        Assert.IsType<BadRequestObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<ConflictException>(() => _controller.Create(duplicateRequest));
     }
 
     [Fact]
-    public void Delete_ExistingEmployee_ShouldReturn204NoContent()
+    public async Task Delete_ExistingEmployee_ShouldReturn204NoContent()
     {
         // Act
-        var result = _controller.Delete(1);
+        var result = await _controller.Delete(1);
 
         // Assert
         Assert.IsType<NoContentResult>(result);
@@ -111,12 +119,9 @@ public class EmployeesControllerTests
     }
 
     [Fact]
-    public void Delete_NonExistingEmployee_ShouldReturn404NotFound()
+    public async Task Delete_NonExistingEmployee_ShouldThrowNotFoundException()
     {
-        // Act
-        var result = _controller.Delete(999);
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _controller.Delete(999));
     }
 }

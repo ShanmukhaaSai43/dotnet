@@ -60,6 +60,24 @@ public abstract class Employee : BaseEntity
     /// </summary>
     public virtual string GetRoleSummary() => $"{Name} ({Type}) - Dept #{DepartmentId}";
 
+    public void UpdateName(string newName)
+    {
+        Name = newName;
+        MarkUpdated();
+    }
+
+    public void UpdateEmail(string newEmail)
+    {
+        Email = newEmail;
+        MarkUpdated();
+    }
+
+    public void UpdateAddress(Address? newAddress)
+    {
+        Address = newAddress;
+        MarkUpdated();
+    }
+
     public void Deactivate()
     {
         IsActive = false;

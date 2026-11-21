@@ -51,6 +51,15 @@ public class ContractEmployee : Employee
         MarkUpdated();
     }
 
+    public void UpdateHourlyRate(decimal newRate)
+    {
+        if (newRate < 15m)
+            throw new ArgumentOutOfRangeException(nameof(newRate), "Hourly rate cannot be less than $15.00.");
+
+        HourlyRate = newRate;
+        MarkUpdated();
+    }
+
     public override string GetRoleSummary() => 
         $"{Name} [Contract] | Rate: {HourlyRate:C}/hr | Logged: {HoursWorkedThisMonth}h | Ends: {ContractEndDate:yyyy-MM-dd}";
 }
