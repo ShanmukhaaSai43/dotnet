@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F4A855D9-0E7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.ConsoleApp", "src\EmployeeManagement.ConsoleApp\EmployeeManagement.ConsoleApp.csproj", "{6B79AA63-194D-497F-A84A-F595773917C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.Domain", "src\EmployeeManagement.Domain\EmployeeManagement.Domain.csproj", "{79F15D67-C632-421E-B543-C105DD3CAE38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,13 @@ Global
 		{6B79AA63-194D-497F-A84A-F595773917C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B79AA63-194D-497F-A84A-F595773917C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B79AA63-194D-497F-A84A-F595773917C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79F15D67-C632-421E-B543-C105DD3CAE38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79F15D67-C632-421E-B543-C105DD3CAE38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79F15D67-C632-421E-B543-C105DD3CAE38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79F15D67-C632-421E-B543-C105DD3CAE38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6B79AA63-194D-497F-A84A-F595773917C1} = {F4A855D9-0E73-4E97-813C-ABCC6706AB60}
+		{79F15D67-C632-421E-B543-C105DD3CAE38} = {F4A855D9-0E73-4E97-813C-ABCC6706AB60}
 	EndGlobalSection
 EndGlobal
