@@ -9,11 +9,11 @@ namespace EmployeeManagement.ConsoleApp;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Console.WriteLine("====================================================================");
-        Console.WriteLine("   .NET Core Engineering: Day 3 - Modern C# & LINQ Transformations  ");
+        Console.WriteLine("   .NET Core Engineering: Day 4 - Unit Testing & Async C#            ");
         Console.WriteLine("   Domain: Employee & Department Management System                  ");
         Console.WriteLine("====================================================================\n");
 
@@ -26,9 +26,11 @@ public class Program
             TypeSemanticsDemo.RunAllDemos();
             OopAndSolidDemo.RunAllDemos();
             LinqAndModernCSharpDemo.RunAllDemos();
+            await AsyncAndToolingDemo.RunAllDemosAsync();
             ConcatenationOfArraySolution.RunTests();
             NumberOfStepsToReduceZeroSolution.RunTests();
             ContainsDuplicateSolution.RunTests();
+            BestTimeToBuyAndSellStockSolution.RunTests();
             return;
         }
 
@@ -43,13 +45,15 @@ public class Program
             Console.WriteLine("4. Apply Annual Raise ('ref' parameter demo)");
             Console.WriteLine("5. Run Day 1 Type Semantics Demos (Value vs Ref)");
             Console.WriteLine("6. Run Day 2 OOP & SOLID Demos (Polymorphism, Records, Interfaces)");
-            Console.WriteLine("7. Run Day 3 Modern C# & LINQ Demos (10 Queries, Deferred Execution, Events)");
-            Console.WriteLine("8. Run Day 1 LeetCode: 1929. Concatenation of Array");
-            Console.WriteLine("9. Run Day 2 LeetCode: 1342. Number of Steps to Reduce to Zero");
-            Console.WriteLine("10. Run Day 3 LeetCode: 217. Contains Duplicate");
-            Console.WriteLine("11. Run Full Automated Verification of Everything (--demo)");
+            Console.WriteLine("7. Run Day 3 Modern C# & LINQ Demos (10 Queries, Deferred Execution)");
+            Console.WriteLine("8. Run Day 4 Async & Cancellation Demos (Task, CancellationToken, WhenAll)");
+            Console.WriteLine("9. Run Day 1 LeetCode: 1929. Concatenation of Array");
+            Console.WriteLine("10. Run Day 2 LeetCode: 1342. Number of Steps to Reduce to Zero");
+            Console.WriteLine("11. Run Day 3 LeetCode: 217. Contains Duplicate");
+            Console.WriteLine("12. Run Day 4 LeetCode: 121. Best Time to Buy and Sell Stock");
+            Console.WriteLine("13. Run Full Automated Verification (--demo)");
             Console.WriteLine("0. Exit");
-            Console.Write("\nEnter choice (0-11): ");
+            Console.Write("\nEnter choice (0-13): ");
 
             string? choice = Console.ReadLine();
             Console.WriteLine();
@@ -78,29 +82,37 @@ public class Program
                     LinqAndModernCSharpDemo.RunAllDemos();
                     break;
                 case "8":
-                    ConcatenationOfArraySolution.RunTests();
+                    await AsyncAndToolingDemo.RunAllDemosAsync();
                     break;
                 case "9":
-                    NumberOfStepsToReduceZeroSolution.RunTests();
+                    ConcatenationOfArraySolution.RunTests();
                     break;
                 case "10":
-                    ContainsDuplicateSolution.RunTests();
+                    NumberOfStepsToReduceZeroSolution.RunTests();
                     break;
                 case "11":
+                    ContainsDuplicateSolution.RunTests();
+                    break;
+                case "12":
+                    BestTimeToBuyAndSellStockSolution.RunTests();
+                    break;
+                case "13":
                     RunAutomatedSampleScenarios(employeeService);
                     TypeSemanticsDemo.RunAllDemos();
                     OopAndSolidDemo.RunAllDemos();
                     LinqAndModernCSharpDemo.RunAllDemos();
+                    await AsyncAndToolingDemo.RunAllDemosAsync();
                     ConcatenationOfArraySolution.RunTests();
                     NumberOfStepsToReduceZeroSolution.RunTests();
                     ContainsDuplicateSolution.RunTests();
+                    BestTimeToBuyAndSellStockSolution.RunTests();
                     break;
                 case "0":
                     running = false;
                     Console.WriteLine("Exiting. Have a great day!");
                     break;
                 default:
-                    Console.WriteLine("Invalid option. Please enter a number between 0 and 11.");
+                    Console.WriteLine("Invalid option. Please enter a number between 0 and 13.");
                     break;
             }
         }
