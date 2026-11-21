@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F4A855D9-0E73-4E97-813C-ABCC6706AB60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.ConsoleApp", "src\EmployeeManagement.ConsoleApp\EmployeeManagement.ConsoleApp.csproj", "{6B79AA63-194D-497F-A84A-F595773917C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B79AA63-194D-497F-A84A-F595773917C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B79AA63-194D-497F-A84A-F595773917C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B79AA63-194D-497F-A84A-F595773917C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B79AA63-194D-497F-A84A-F595773917C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6B79AA63-194D-497F-A84A-F595773917C1} = {F4A855D9-0E73-4E97-813C-ABCC6706AB60}
+	EndGlobalSection
+EndGlobal
