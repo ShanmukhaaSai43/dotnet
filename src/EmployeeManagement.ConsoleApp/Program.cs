@@ -1,8 +1,9 @@
-﻿using EmployeeManagement.ConsoleApp.Demos;
+using EmployeeManagement.ConsoleApp.Demos;
 using EmployeeManagement.ConsoleApp.Exceptions;
 using EmployeeManagement.ConsoleApp.LeetCode;
 using EmployeeManagement.ConsoleApp.Models;
 using EmployeeManagement.ConsoleApp.Services;
+using EmployeeManagement.Domain.LeetCode;
 
 namespace EmployeeManagement.ConsoleApp;
 
@@ -12,7 +13,7 @@ public class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Console.WriteLine("====================================================================");
-        Console.WriteLine("   .NET Core Engineering: Day 1 - C# Fundamentals & Mini-App        ");
+        Console.WriteLine("   .NET Core Engineering: Day 2 - Object-Oriented C# & SOLID        ");
         Console.WriteLine("   Domain: Employee & Department Management System                  ");
         Console.WriteLine("====================================================================\n");
 
@@ -23,7 +24,9 @@ public class Program
         {
             RunAutomatedSampleScenarios(employeeService);
             TypeSemanticsDemo.RunAllDemos();
+            OopAndSolidDemo.RunAllDemos();
             ConcatenationOfArraySolution.RunTests();
+            NumberOfStepsToReduceZeroSolution.RunTests();
             return;
         }
 
@@ -36,11 +39,13 @@ public class Program
             Console.WriteLine("2. Add New Employee (Validation & Nullable demo)");
             Console.WriteLine("3. Find Employee By ID ('out' parameter demo)");
             Console.WriteLine("4. Apply Annual Raise ('ref' parameter demo)");
-            Console.WriteLine("5. Run 3 Sample Input/Output Verification Scenarios");
-            Console.WriteLine("6. Run C# Type Semantics & Interview Demos");
-            Console.WriteLine("7. Run Day 1 LeetCode (Concatenation of Array)");
-            Console.WriteLine("8. Exit");
-            Console.Write("\nEnter choice (1-8): ");
+            Console.WriteLine("5. Run Day 1 Type Semantics Demos (Value vs Ref)");
+            Console.WriteLine("6. Run Day 2 OOP & SOLID Demos (Polymorphism, Records, Interfaces)");
+            Console.WriteLine("7. Run Day 1 LeetCode: 1929. Concatenation of Array");
+            Console.WriteLine("8. Run Day 2 LeetCode: 1342. Number of Steps to Reduce to Zero");
+            Console.WriteLine("9. Run Full Automated Verification (--demo)");
+            Console.WriteLine("0. Exit");
+            Console.Write("\nEnter choice (0-9): ");
 
             string? choice = Console.ReadLine();
             Console.WriteLine();
@@ -50,38 +55,40 @@ public class Program
                 case "1":
                     Console.WriteLine(employeeService.GenerateFormattedReport());
                     break;
-
                 case "2":
                     HandleAddEmployeeInteractive(employeeService);
                     break;
-
                 case "3":
                     HandleFindEmployeeInteractive(employeeService);
                     break;
-
                 case "4":
                     HandleApplyRaiseInteractive(employeeService);
                     break;
-
                 case "5":
-                    RunAutomatedSampleScenarios(employeeService);
-                    break;
-
-                case "6":
                     TypeSemanticsDemo.RunAllDemos();
                     break;
-
+                case "6":
+                    OopAndSolidDemo.RunAllDemos();
+                    break;
                 case "7":
                     ConcatenationOfArraySolution.RunTests();
                     break;
-
                 case "8":
+                    NumberOfStepsToReduceZeroSolution.RunTests();
+                    break;
+                case "9":
+                    RunAutomatedSampleScenarios(employeeService);
+                    TypeSemanticsDemo.RunAllDemos();
+                    OopAndSolidDemo.RunAllDemos();
+                    ConcatenationOfArraySolution.RunTests();
+                    NumberOfStepsToReduceZeroSolution.RunTests();
+                    break;
+                case "0":
                     running = false;
                     Console.WriteLine("Exiting. Have a great day!");
                     break;
-
                 default:
-                    Console.WriteLine("Invalid option. Please enter a number between 1 and 8.");
+                    Console.WriteLine("Invalid option. Please enter a number between 0 and 9.");
                     break;
             }
         }
@@ -93,7 +100,6 @@ public class Program
         Console.WriteLine("              3 SAMPLE INPUT AND OUTPUT DEMONSTRATIONS              ");
         Console.WriteLine("====================================================================\n");
 
-        // Scenario 1: Successfully adding a complete employee with optional & nullable fields
         Console.WriteLine(">>> SAMPLE 1: Adding a Valid Employee Record (Nullable Bonus & Phone included)");
         try
         {
@@ -116,7 +122,6 @@ public class Program
             Console.WriteLine($"[ERROR]: {ex.Message}\n");
         }
 
-        // Scenario 2: Adding an employee with omitted optional parameters (null bonus, null phone)
         Console.WriteLine(">>> SAMPLE 2: Adding Employee with Omitted Nullable Values (Bonus=null, Phone=null)");
         try
         {
@@ -125,7 +130,6 @@ public class Program
                 email: "elena.r@company.com",
                 department: Department.Marketing,
                 salary: 58000m
-                // bonus, phone, address default
             );
             Console.WriteLine($"[OUTPUT]: Employee successfully created with defaults!");
             Console.WriteLine($"  {emp2}");
@@ -137,7 +141,6 @@ public class Program
             Console.WriteLine($"[ERROR]: {ex.Message}\n");
         }
 
-        // Scenario 3: Defensive Exception Handling on Invalid Input
         Console.WriteLine(">>> SAMPLE 3: Exception Handling on Invalid Input (Invalid email & negative salary)");
         try
         {
@@ -155,10 +158,6 @@ public class Program
             Console.WriteLine($"  Field: {ex.FieldName}");
             Console.WriteLine($"  Message: {ex.Message}\n");
         }
-
-        // Display updated tabular report
-        Console.WriteLine(">>> Updated State After Sample Operations:");
-        Console.WriteLine(service.GenerateFormattedReport());
     }
 
     private static void HandleAddEmployeeInteractive(EmployeeService service)
@@ -203,7 +202,7 @@ public class Program
         Console.Write("Enter Employee ID to search: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
-            if (service.TryGetEmployeeById(id, out Employee? employee) && employee != null)
+            if (service.TryGetEmployeeById(id, out EmployeeManagement.ConsoleApp.Models.Employee? employee) && employee != null)
             {
                 Console.WriteLine($"\nFound: {employee}");
             }
@@ -223,13 +222,13 @@ public class Program
         Console.Write("Enter Employee ID to adjust salary: ");
         if (int.TryParse(Console.ReadLine(), out int id))
         {
-            if (service.TryGetEmployeeById(id, out Employee? emp) && emp != null)
+            if (service.TryGetEmployeeById(id, out EmployeeManagement.ConsoleApp.Models.Employee? emp) && emp != null)
             {
                 Console.Write($"Current Salary is {emp.Salary:C}. Enter % raise (e.g. 10 for 10%): ");
                 if (decimal.TryParse(Console.ReadLine(), out decimal pct))
                 {
                     decimal currentSalary = emp.Salary;
-                    service.ApplyAnnualRaise(ref currentSalary, pct); // Demonstrates 'ref'
+                    service.ApplyAnnualRaise(ref currentSalary, pct);
                     emp.Salary = currentSalary;
                     Console.WriteLine($"New Salary is: {emp.Salary:C}");
                 }
