@@ -13,7 +13,7 @@ public class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Console.WriteLine("====================================================================");
-        Console.WriteLine("   .NET Core Engineering: Day 2 - Object-Oriented C# & SOLID        ");
+        Console.WriteLine("   .NET Core Engineering: Day 3 - Modern C# & LINQ Transformations  ");
         Console.WriteLine("   Domain: Employee & Department Management System                  ");
         Console.WriteLine("====================================================================\n");
 
@@ -25,8 +25,10 @@ public class Program
             RunAutomatedSampleScenarios(employeeService);
             TypeSemanticsDemo.RunAllDemos();
             OopAndSolidDemo.RunAllDemos();
+            LinqAndModernCSharpDemo.RunAllDemos();
             ConcatenationOfArraySolution.RunTests();
             NumberOfStepsToReduceZeroSolution.RunTests();
+            ContainsDuplicateSolution.RunTests();
             return;
         }
 
@@ -41,11 +43,13 @@ public class Program
             Console.WriteLine("4. Apply Annual Raise ('ref' parameter demo)");
             Console.WriteLine("5. Run Day 1 Type Semantics Demos (Value vs Ref)");
             Console.WriteLine("6. Run Day 2 OOP & SOLID Demos (Polymorphism, Records, Interfaces)");
-            Console.WriteLine("7. Run Day 1 LeetCode: 1929. Concatenation of Array");
-            Console.WriteLine("8. Run Day 2 LeetCode: 1342. Number of Steps to Reduce to Zero");
-            Console.WriteLine("9. Run Full Automated Verification (--demo)");
+            Console.WriteLine("7. Run Day 3 Modern C# & LINQ Demos (10 Queries, Deferred Execution, Events)");
+            Console.WriteLine("8. Run Day 1 LeetCode: 1929. Concatenation of Array");
+            Console.WriteLine("9. Run Day 2 LeetCode: 1342. Number of Steps to Reduce to Zero");
+            Console.WriteLine("10. Run Day 3 LeetCode: 217. Contains Duplicate");
+            Console.WriteLine("11. Run Full Automated Verification of Everything (--demo)");
             Console.WriteLine("0. Exit");
-            Console.Write("\nEnter choice (0-9): ");
+            Console.Write("\nEnter choice (0-11): ");
 
             string? choice = Console.ReadLine();
             Console.WriteLine();
@@ -71,24 +75,32 @@ public class Program
                     OopAndSolidDemo.RunAllDemos();
                     break;
                 case "7":
-                    ConcatenationOfArraySolution.RunTests();
+                    LinqAndModernCSharpDemo.RunAllDemos();
                     break;
                 case "8":
-                    NumberOfStepsToReduceZeroSolution.RunTests();
+                    ConcatenationOfArraySolution.RunTests();
                     break;
                 case "9":
+                    NumberOfStepsToReduceZeroSolution.RunTests();
+                    break;
+                case "10":
+                    ContainsDuplicateSolution.RunTests();
+                    break;
+                case "11":
                     RunAutomatedSampleScenarios(employeeService);
                     TypeSemanticsDemo.RunAllDemos();
                     OopAndSolidDemo.RunAllDemos();
+                    LinqAndModernCSharpDemo.RunAllDemos();
                     ConcatenationOfArraySolution.RunTests();
                     NumberOfStepsToReduceZeroSolution.RunTests();
+                    ContainsDuplicateSolution.RunTests();
                     break;
                 case "0":
                     running = false;
                     Console.WriteLine("Exiting. Have a great day!");
                     break;
                 default:
-                    Console.WriteLine("Invalid option. Please enter a number between 0 and 9.");
+                    Console.WriteLine("Invalid option. Please enter a number between 0 and 11.");
                     break;
             }
         }

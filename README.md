@@ -16,10 +16,11 @@ D:\sai\dotnet\
 ├── README.md                                  # Repository Overview
 ├── DAY01_README.md                            # Day 1 Deliverables (Syntax & Types)
 ├── DAY02_README.md                            # Day 2 Deliverables (OOP & SOLID)
+├── DAY03_README.md                            # Day 3 Deliverables (Modern C# & LINQ)
 ├── EmployeeManagement.sln                     # Main Visual Studio Solution
 │
 └── src/
-    ├── EmployeeManagement.Domain/             # Day 2 Domain Model Class Library
+    ├── EmployeeManagement.Domain/             # Core Domain Model & Business Logic
     │   ├── Common/
     │   │   └── BaseEntity.cs                  # Abstract Base Entity
     │   ├── ValueObjects/
@@ -31,21 +32,31 @@ D:\sai\dotnet\
     │   │   ├── FullTimeEmployee.cs            # Polymorphic Full-Time Entity
     │   │   ├── ContractEmployee.cs            # Polymorphic Contract Entity
     │   │   └── Department.cs                  # Encapsulation & Aggregation
+    │   ├── DTOs/
+    │   │   ├── EmployeeSummaryDto.cs          # Query Projection DTO
+    │   │   └── DepartmentPayrollReportDto.cs  # Aggregation GroupBy Report DTO
+    │   ├── Events/
+    │   │   └── EmployeeEvents.cs              # Custom Delegates & EventHandler<T>
+    │   ├── Extensions/
+    │   │   └── CollectionExtensions.cs        # Deferred Execution (yield return)
+    │   ├── Services/
+    │   │   ├── LinqQueryService.cs            # 10 Testable LINQ Queries & Pattern Matching
+    │   │   └── PayrollCalculator.cs           # SRP Payroll & Tax Calculator
     │   ├── Contracts/
     │   │   ├── IRepository.cs                 # Generic Repository Contract
     │   │   ├── IEmployeeRepository.cs         # Specialized Employee Repository
     │   │   └── IPayrollCalculator.cs          # Payroll Abstraction Contract
-    │   ├── Services/
-    │   │   └── PayrollCalculator.cs           # SRP Payroll & Tax Calculator
     │   ├── Repositories/
     │   │   └── InMemoryEmployeeRepository.cs  # Decoupled In-Memory Storage
     │   └── LeetCode/
-    │       └── NumberOfStepsToReduceZero.cs   # LeetCode 1342 Solution & Tests
+    │       ├── NumberOfStepsToReduceZero.cs   # Day 2 LeetCode 1342
+    │       └── ContainsDuplicate.cs           # Day 3 LeetCode 217
     │
     └── EmployeeManagement.ConsoleApp/         # Console Application & Demos
         ├── Demos/
         │   ├── TypeSemanticsDemo.cs           # Day 1 Value vs Reference
-        │   └── OopAndSolidDemo.cs             # Day 2 Polymorphism, Records, Interfaces
+        │   ├── OopAndSolidDemo.cs             # Day 2 Polymorphism & Records
+        │   └── LinqAndModernCSharpDemo.cs     # Day 3 LINQ, Lazy Eval & Events
         ├── LeetCode/
         │   └── ConcatenationOfArray.cs        # Day 1 LeetCode 1929
         └── Program.cs                         # Interactive CLI & Demo runner
@@ -59,20 +70,20 @@ D:\sai\dotnet\
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **C# Fundamentals & Syntax** | Console App, Value/Ref Types, StringBuilder, Custom Exceptions, LeetCode 1929 | **Completed** ✅ |
 | **Day 2** | **Object-Oriented C# & SOLID** | Domain Class Library, Abstract Classes, Polymorphism, Records, Interfaces, LeetCode 1342 | **Completed** ✅ |
-| **Day 3** | **Modern C# & LINQ** | 8+ LINQ operations, Grouping/Filtering, Unit-testable methods | Next Up ⏳ |
-| **Day 4** | **Unit Testing & Async C#** | xUnit suite (5+ tests, AAA pattern), Async method with cancellation | Planned ⏳ |
+| **Day 3** | **Modern C# & LINQ** | 10 LINQ Operations, GroupBy DTOs, Deferred Execution (`yield return`), Delegates/Events, LeetCode 217 | **Completed** ✅ |
+| **Day 4** | **Unit Testing & Async C#** | xUnit suite (5+ tests, AAA pattern), Async method with cancellation | Next Up ⏳ |
 | **Day 5** | **Mini-Build Checkpoint (Gate 1)** | Complete tested mini-app, injected bug regression test | Planned ⏳ |
 
 ---
 
-## How to Run Console App
+## How to Run
 
-### 1. Interactive Menu
-```powershell
-dotnet run --project "src/EmployeeManagement.ConsoleApp"
-```
-
-### 2. Automated Demonstration Mode (All Demos & LeetCode Tests)
+### Automated Demonstration Mode
 ```powershell
 dotnet run --project "src/EmployeeManagement.ConsoleApp" -- --demo
+```
+
+### Interactive Menu
+```powershell
+dotnet run --project "src/EmployeeManagement.ConsoleApp"
 ```
