@@ -23,6 +23,7 @@ D:\sai\dotnet\
 ├── DAY07_README.md                            # Day 7: DI Lifetimes & Custom Middleware
 ├── DAY08_README.md                            # Day 8: Layered Architecture & Validation
 ├── DAY09_README.md                            # Day 9: EF Core 8.0 & SQL Server Integration
+├── DAY10_GATE2_README.md                      # Day 10: Security, JWT & Gate 2 Checkpoint (Week 2 Passed)
 ├── EmployeeManagement.sln                     # Main Visual Studio Solution
 │
 ├── src/
@@ -153,7 +154,7 @@ D:\sai\dotnet\
 | **Day 7** | **Dependency Injection & Middleware**| Built-in DI lifetimes (Transient/Scoped/Singleton), Custom logging middleware, IOptions configuration, 64 tests | **Completed** ✅ |
 | **Day 8** | **Layered Architecture & Validation**| Clean 3-Tier separation (API/Application/Domain), FluentValidation, Global Exception Handler (RFC 7807), 94 tests | **Completed** ✅ |
 | **Day 9** | **EF Core & SQL Integration**| DbContext, Entity configurations, SQL Server migrations (InitialCreate), TPH inheritance, pagination, 106 tests | **Completed** ✅ |
-| **Day 10** | **Security, JWT & Gate 2 Checkpoint**| JWT Authentication & Authorization, Role policies (Admin/Manager), End-to-End Capstone Checkpoint | Next Up ⏳ |
+| **Day 10** | **Security, JWT & Gate 2 Checkpoint**| JWT Bearer AuthN/AuthZ, RBAC (Admin/Manager/Employee), 401 vs 403, Swagger Bearer UI, 153 tests | **GATE 2 PASSED** 🏆 |
 
 ---
 
@@ -164,7 +165,7 @@ D:\sai\dotnet\
 dotnet run --project "src/EmployeeManagement.API"
 ```
 
-### Run All 106 Unit Tests
+### Run All 153 Unit Tests
 ```powershell
 dotnet test
 ```

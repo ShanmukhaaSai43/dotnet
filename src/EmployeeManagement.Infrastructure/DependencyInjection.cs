@@ -1,6 +1,9 @@
+using EmployeeManagement.Application.Configuration;
+using EmployeeManagement.Application.Interfaces;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Infrastructure.Data;
 using EmployeeManagement.Infrastructure.Repositories;
+using EmployeeManagement.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +42,21 @@ public static class DependencyInjection
         // Register EF Core SqlEmployeeRepository for database persistence
         services.AddScoped<IEmployeeRepository, SqlEmployeeRepository>();
         services.AddScoped<SqlEmployeeRepository>();
+
+        // Register JWT and Security infrastructure
+        var jwtConfig = configuration.GetSection(JwtSettings.SectionName);
+        services.Configure<JwtSettings>(options =>
+        {
+            options.SecretKey = jwtConfig[nameof(JwtSettings.SecretKey)] ?? options.SecretKey;
+            options.Issuer = jwtConfig[nameof(JwtSettings.Issuer)] ?? options.Issuer;
+            options.Audience = jwtConfig[nameof(JwtSettings.Audience)] ?? options.Audience;
+            if (int.TryParse(jwtConfig[nameof(JwtSettings.ExpiryMinutes)], out var exp))
+            {
+                options.ExpiryMinutes = exp;
+            }
+        });
+        services.AddSingleton<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

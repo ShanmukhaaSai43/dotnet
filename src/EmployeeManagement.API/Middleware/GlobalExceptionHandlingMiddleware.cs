@@ -93,6 +93,15 @@ public class GlobalExceptionHandlingMiddleware
                     correlationId, context.Request.Path, ruleEx.Message);
                 break;
 
+            case UnauthorizedAccessException authEx:
+                statusCode = StatusCodes.Status401Unauthorized;
+                title = "Unauthorized";
+                detail = authEx.Message;
+                _logger.LogWarning(
+                    "[{CorrelationId}] Unauthorized access on {Path}: {Message}",
+                    correlationId, context.Request.Path, authEx.Message);
+                break;
+
             default:
                 statusCode = StatusCodes.Status500InternalServerError;
                 title = "An unexpected server error occurred";
