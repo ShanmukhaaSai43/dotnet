@@ -52,6 +52,52 @@ public class EmployeeService : IEmployeeService
         return Task.FromResult(responses);
     }
 
+    public Task<PagedResult<EmployeeResponse>> GetPagedEmployeesAsync(
+        PaginationParams pagination,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _repository.GetAll().AsEnumerable();
+
+        if (pagination.DepartmentId.HasValue)
+        {
+            query = query.Where(e => e.DepartmentId == pagination.DepartmentId.Value);
+        }
+
+        if (pagination.MinPay.HasValue)
+        {
+            query = query.Where(e => e.CalculateMonthlyPay() >= pagination.MinPay.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(pagination.SearchTerm))
+        {
+            var search = pagination.SearchTerm.Trim().ToLowerInvariant();
+            query = query.Where(e => e.Name.ToLowerInvariant().Contains(search) || e.Email.ToLowerInvariant().Contains(search));
+        }
+
+        query = (pagination.SortBy?.ToLowerInvariant(), pagination.SortDirection?.ToLowerInvariant()) switch
+        {
+            ("email", "desc") => query.OrderByDescending(e => e.Email),
+            ("email", _) => query.OrderBy(e => e.Email),
+            ("created", "desc") => query.OrderByDescending(e => e.CreatedAt),
+            ("created", _) => query.OrderBy(e => e.CreatedAt),
+            ("pay", "desc") => query.OrderByDescending(e => e.CalculateMonthlyPay()),
+            ("pay", _) => query.OrderBy(e => e.CalculateMonthlyPay()),
+            ("name", "desc") => query.OrderByDescending(e => e.Name),
+            _ => query.OrderBy(e => e.Name)
+        };
+
+        var allList = query.ToList();
+        int totalCount = allList.Count;
+
+        var pagedItems = allList
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .Select(MapToResponse)
+            .ToList();
+
+        return Task.FromResult(PagedResult<EmployeeResponse>.Create(pagedItems, totalCount, pagination.PageNumber, pagination.PageSize));
+    }
+
     public Task<EmployeeResponse> GetEmployeeByIdAsync(int id)
     {
         var employee = _repository.GetById(id)

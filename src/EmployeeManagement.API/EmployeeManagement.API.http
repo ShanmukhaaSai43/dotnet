@@ -118,3 +118,15 @@ Content-Type: application/json
 ### 17. [DAY 8] NOT FOUND EXCEPTION (404 Not Found with RFC 7807 ProblemDetails)
 GET {{EmployeeManagement.API_HostAddress}}/api/employees/88888
 Accept: application/json
+
+### 18. [DAY 9] SERVER-SIDE PAGINATION & SORTING (Page 1, Size 5, Sort by Name Ascending)
+GET {{EmployeeManagement.API_HostAddress}}/api/employees/paged?pageNumber=1&pageSize=5&sortBy=name&sortDirection=asc
+Accept: application/json
+
+### 19. [DAY 9] SERVER-SIDE PAGINATION WITH SEARCH FILTER (Search by name or email)
+GET {{EmployeeManagement.API_HostAddress}}/api/employees/paged?searchTerm=Johnson&pageNumber=1&pageSize=10
+Accept: application/json
+
+### 20. [DAY 9] SERVER-SIDE PAGINATION FILTERED BY DEPARTMENT
+GET {{EmployeeManagement.API_HostAddress}}/api/employees/paged?departmentId=1&pageNumber=1&pageSize=5
+Accept: application/json

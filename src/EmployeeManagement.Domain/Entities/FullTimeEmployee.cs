@@ -15,6 +15,12 @@ public class FullTimeEmployee : Employee
 
     public override EmployeeType Type => EmployeeType.FullTime;
 
+    // Parameterless constructor for EF Core entity materialization
+    protected FullTimeEmployee() : base()
+    {
+        HealthPlanTier = "Standard";
+    }
+
     public FullTimeEmployee(
         int id, 
         string name, 

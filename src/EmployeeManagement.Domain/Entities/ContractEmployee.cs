@@ -15,6 +15,11 @@ public class ContractEmployee : Employee
 
     public override EmployeeType Type => EmployeeType.Contract;
 
+    // Parameterless constructor for EF Core entity materialization
+    protected ContractEmployee() : base()
+    {
+    }
+
     public ContractEmployee(
         int id, 
         string name, 
