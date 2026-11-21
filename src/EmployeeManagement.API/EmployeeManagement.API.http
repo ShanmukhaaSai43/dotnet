@@ -1,27 +1,101 @@
 @EmployeeManagement.API_HostAddress = http://localhost:5200
 
-### 1. GET all employees (Check Response Headers: X-Correlation-Id & X-Response-Time-Ms)
+###############################################################################
+# DAY 10: AUTHENTICATION & JWT SECURITY (GATE 2)
+###############################################################################
+
+### 1. LOGIN AS ADMIN (200 OK - Generates Admin JWT Token)
+# @name adminLogin
+POST {{EmployeeManagement.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "Admin@123"
+}
+
+### Store the Admin Token from the response
+@adminToken = {{adminLogin.response.body.token}}
+
+### 2. LOGIN AS MANAGER (200 OK - Generates Manager JWT Token)
+# @name managerLogin
+POST {{EmployeeManagement.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "manager",
+  "password": "Manager@123"
+}
+
+### Store the Manager Token
+@managerToken = {{managerLogin.response.body.token}}
+
+### 3. LOGIN AS EMPLOYEE (200 OK - Generates Employee JWT Token)
+# @name employeeLogin
+POST {{EmployeeManagement.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "employee",
+  "password": "Employee@123"
+}
+
+### Store the Employee Token
+@employeeToken = {{employeeLogin.response.body.token}}
+
+### 4. LOGIN FAILURE (401 Unauthorized - Invalid Credentials)
+POST {{EmployeeManagement.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "WrongPassword999!"
+}
+
+### 5. GET CURRENT USER PROFILE (/api/auth/me) with Admin Token (200 OK)
+GET {{EmployeeManagement.API_HostAddress}}/api/auth/me
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### 6. [401 UNAUTHORIZED TEST] Access protected resource with NO token (401 Unauthorized)
 GET {{EmployeeManagement.API_HostAddress}}/api/employees
 Accept: application/json
 
-### 2. GET all employees filtered by Department 1
-GET {{EmployeeManagement.API_HostAddress}}/api/employees?departmentId=1
+### 7. [403 FORBIDDEN TEST] Attempt Admin-Only DELETE with Employee Token (403 Forbidden)
+DELETE {{EmployeeManagement.API_HostAddress}}/api/employees/1
+Authorization: Bearer {{employeeToken}}
+
+### 8. [403 FORBIDDEN TEST] Attempt Admin-Only Salary Patch with Manager Token (403 Forbidden)
+PATCH {{EmployeeManagement.API_HostAddress}}/api/employees/1/salary
+Authorization: Bearer {{managerToken}}
+Content-Type: application/json
+
+{
+  "newSalaryOrRate": 160000
+}
+
+###############################################################################
+# PROTECTED EMPLOYEE & DEPARTMENT ENDPOINTS (WITH BEARER TOKENS)
+###############################################################################
+
+### 9. GET ALL EMPLOYEES (200 OK - Authorized with Employee Token)
+GET {{EmployeeManagement.API_HostAddress}}/api/employees
+Authorization: Bearer {{employeeToken}}
 Accept: application/json
 
-### 3. GET all high-earning employees (Monthly pay >= $10,000)
-GET {{EmployeeManagement.API_HostAddress}}/api/employees?minPay=10000
+### 10. GET PAGED EMPLOYEES (200 OK - Server-Side Filtering, Sorting, Pagination)
+GET {{EmployeeManagement.API_HostAddress}}/api/employees/paged?pageNumber=1&pageSize=5&sortBy=name&sortDescending=false
+Authorization: Bearer {{employeeToken}}
 Accept: application/json
 
-### 4. GET employee by ID (200 OK)
-GET {{EmployeeManagement.API_HostAddress}}/api/employees/101
+### 11. GET EMPLOYEE BY ID (200 OK)
+GET {{EmployeeManagement.API_HostAddress}}/api/employees/1
+Authorization: Bearer {{employeeToken}}
 Accept: application/json
 
-### 5. GET non-existent employee (404 Not Found)
-GET {{EmployeeManagement.API_HostAddress}}/api/employees/9999
-Accept: application/json
-
-### 6. POST create a new Full-Time Employee (201 Created)
+### 12. CREATE EMPLOYEE (201 Created - Authorized with Manager Token)
 POST {{EmployeeManagement.API_HostAddress}}/api/employees
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
 {
@@ -37,8 +111,44 @@ Content-Type: application/json
   "zipCode": "90001"
 }
 
-### 7. POST create invalid employee (400 Bad Request - validation failure)
+### 13. PATCH EMPLOYEE SALARY (200 OK - Authorized with Admin Token)
+PATCH {{EmployeeManagement.API_HostAddress}}/api/employees/1/salary
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "newSalaryOrRate": 150000
+}
+
+### 14. GET ALL DEPARTMENTS (200 OK)
+GET {{EmployeeManagement.API_HostAddress}}/api/departments
+Authorization: Bearer {{employeeToken}}
+Accept: application/json
+
+### 15. GET DEPARTMENT PAYROLL SUMMARY (200 OK - Authorized with Manager Token)
+GET {{EmployeeManagement.API_HostAddress}}/api/departments/1/payroll
+Authorization: Bearer {{managerToken}}
+Accept: application/json
+
+### 16. DELETE EMPLOYEE (204 No Content - Authorized with Admin Token)
+DELETE {{EmployeeManagement.API_HostAddress}}/api/employees/2
+Authorization: Bearer {{adminToken}}
+
+###############################################################################
+# DAY 7 & 8 DIAGNOSTICS & EXCEPTION TESTS
+###############################################################################
+
+### 17. DI LIFETIMES VERIFICATION (Transient vs Scoped vs Singleton GUIDs)
+GET {{EmployeeManagement.API_HostAddress}}/api/diagnostics/lifetimes
+Accept: application/json
+
+### 18. STRONGLY-TYPED CONFIGURATION (IOptions<PayrollSettings>)
+GET {{EmployeeManagement.API_HostAddress}}/api/diagnostics/configuration
+Accept: application/json
+
+### 19. RFC 7807 FLUENTVALIDATION FAILURE (400 Bad Request)
 POST {{EmployeeManagement.API_HostAddress}}/api/employees
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
@@ -48,85 +158,3 @@ Content-Type: application/json
   "type": 1,
   "salaryOrHourlyRate": -100
 }
-
-### 8. PUT update existing employee (204 No Content)
-PUT {{EmployeeManagement.API_HostAddress}}/api/employees/101
-Content-Type: application/json
-
-{
-  "name": "Alice Johnson Updated",
-  "email": "alice.johnson@company.com",
-  "departmentId": 2,
-  "street": "100 New Tech Way",
-  "city": "San Francisco",
-  "state": "CA",
-  "zipCode": "94101"
-}
-
-### 9. PATCH update employee salary (200 OK)
-PATCH {{EmployeeManagement.API_HostAddress}}/api/employees/101/salary
-Content-Type: application/json
-
-{
-  "newSalaryOrRate": 145000
-}
-
-### 10. DELETE employee (204 No Content)
-DELETE {{EmployeeManagement.API_HostAddress}}/api/employees/102
-
-### 11. GET all departments
-GET {{EmployeeManagement.API_HostAddress}}/api/departments
-Accept: application/json
-
-### 12. GET department payroll report & budget health
-GET {{EmployeeManagement.API_HostAddress}}/api/departments/1/payroll
-Accept: application/json
-
-### 13. [DAY 7] DI LIFETIMES VERIFICATION (Transient vs Scoped vs Singleton GUIDs)
-GET {{EmployeeManagement.API_HostAddress}}/api/diagnostics/lifetimes
-Accept: application/json
-
-### 14. [DAY 7] STRONGLY-TYPED CONFIGURATION (IOptions<PayrollSettings>)
-GET {{EmployeeManagement.API_HostAddress}}/api/diagnostics/configuration
-Accept: application/json
-
-### 15. [DAY 8] FLUENTVALIDATION FAILURE (400 Bad Request with RFC 7807 ValidationProblemDetails)
-POST {{EmployeeManagement.API_HostAddress}}/api/employees
-Content-Type: application/json
-
-{
-  "name": "Invalid@Name123",
-  "email": "not-a-valid-email",
-  "departmentId": -5,
-  "type": 1,
-  "salaryOrHourlyRate": 12000,
-  "zipCode": "123"
-}
-
-### 16. [DAY 8] CONFLICT EXCEPTION (409 Conflict with RFC 7807 ProblemDetails - Duplicate Email)
-POST {{EmployeeManagement.API_HostAddress}}/api/employees
-Content-Type: application/json
-
-{
-  "name": "Alice Duplicate",
-  "email": "alice.johnson@company.com",
-  "departmentId": 1,
-  "type": 1,
-  "salaryOrHourlyRate": 95000
-}
-
-### 17. [DAY 8] NOT FOUND EXCEPTION (404 Not Found with RFC 7807 ProblemDetails)
-GET {{EmployeeManagement.API_HostAddress}}/api/employees/88888
-Accept: application/json
-
-### 18. [DAY 9] SERVER-SIDE PAGINATION & SORTING (Page 1, Size 5, Sort by Name Ascending)
-GET {{EmployeeManagement.API_HostAddress}}/api/employees/paged?pageNumber=1&pageSize=5&sortBy=name&sortDirection=asc
-Accept: application/json
-
-### 19. [DAY 9] SERVER-SIDE PAGINATION WITH SEARCH FILTER (Search by name or email)
-GET {{EmployeeManagement.API_HostAddress}}/api/employees/paged?searchTerm=Johnson&pageNumber=1&pageSize=10
-Accept: application/json
-
-### 20. [DAY 9] SERVER-SIDE PAGINATION FILTERED BY DEPARTMENT
-GET {{EmployeeManagement.API_HostAddress}}/api/employees/paged?departmentId=1&pageNumber=1&pageSize=5
-Accept: application/json
