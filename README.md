@@ -1,7 +1,7 @@
 # .NET Engineering Training: Capstone Project
 
 **Capstone Domain:** Employee & Department Management System  
-**Framework:** .NET 8.0 (C# 12)  
+**Framework:** .NET 8.0 (C# 12 / ASP.NET Core)  
 **Author:** Shanmukha-Sai (<kalugurisai2002@gmail.com>)
 
 ---
@@ -18,10 +18,21 @@ D:\sai\dotnet\
 ├── DAY02_README.md                            # Day 2: OOP Pillars & SOLID Abstractions
 ├── DAY03_README.md                            # Day 3: Modern C# & LINQ Transformations
 ├── DAY04_README.md                            # Day 4: Unit Testing (xUnit) & Async C#
-├── DAY05_GATE1_README.md                      # Day 5: Gate 1 Assessment & Checkpoint
+├── DAY05_GATE1_README.md                      # Day 5: Gate 1 Assessment (Week 1 Passed)
+├── DAY06_README.md                            # Day 6: ASP.NET Core Web API & REST CRUD
 ├── EmployeeManagement.sln                     # Main Visual Studio Solution
 │
 ├── src/
+│   ├── EmployeeManagement.API/                # ASP.NET Core Web API (Week 2)
+│   │   ├── Controllers/
+│   │   │   ├── EmployeesController.cs         # Full CRUD: GET, POST, PUT, PATCH, DELETE
+│   │   │   └── DepartmentsController.cs       # Department & Payroll summary endpoints
+│   │   ├── DTOs/
+│   │   │   ├── EmployeeDtos.cs                # Validated Request/Response DTOs
+│   │   │   └── DepartmentDtos.cs              # Department DTOs
+│   │   ├── EmployeeManagement.API.http        # Runnable HTTP requests collection
+│   │   └── Program.cs                         # API Configuration & Swagger UI
+│   │
 │   ├── EmployeeManagement.Domain/             # Core Domain Model & Business Logic
 │   │   ├── Common/
 │   │   │   └── BaseEntity.cs                  # Abstract Base Entity
@@ -70,7 +81,9 @@ D:\sai\dotnet\
 │       └── Program.cs                         # Interactive CLI & Demo runner
 │
 └── tests/
-    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (37 Passing Tests)
+    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (58 Passing Tests)
+        ├── ApiTests/
+        │   └── EmployeesControllerTests.cs    # Web API CRUD & HTTP status code tests
         ├── DomainTests/
         │   ├── EmployeeTests.cs               # Pay calculation & validation tests
         │   ├── DepartmentTests.cs             # Encapsulation & budget tests
@@ -87,7 +100,7 @@ D:\sai\dotnet\
 
 ---
 
-## Week 1 Progress Summary (Gate 1 Passed)
+## Daily Modules & Progress
 
 | Day | Module | Deliverables | Status |
 | :--- | :--- | :--- | :---: |
@@ -95,18 +108,20 @@ D:\sai\dotnet\
 | **Day 2** | **Object-Oriented C# & SOLID** | Domain Class Library, Abstract Classes, Polymorphism, Records, Interfaces, LeetCode 1342 | **Completed** ✅ |
 | **Day 3** | **Modern C# & LINQ** | 10 LINQ Operations, GroupBy DTOs, Deferred Execution (`yield return`), Delegates/Events, LeetCode 217 | **Completed** ✅ |
 | **Day 4** | **Unit Testing & Async C#** | xUnit suite (27 tests, AAA pattern), Async method with cancellation, LeetCode 121 | **Completed** ✅ |
-| **Day 5** | **Mini-Build Checkpoint (Gate 1)** | Fixed defect #BUG-101, Regression Test suite (37 total tests), Code Walkthrough Guide, LeetCode 242 | **GATE 1 PASSED** 🏆 |
+| **Day 5** | **Mini-Build Checkpoint (Gate 1)** | Fixed defect #BUG-101, Regression Test suite (51 tests), Code Walkthrough Guide, LeetCode 242 | **GATE 1 PASSED** 🏆 |
+| **Day 6** | **ASP.NET Core REST API Basics**| Web API project, Employees & Departments CRUD (GET/POST/PUT/PATCH/DELETE), DTOs, Swagger, .http file, 58 tests | **Completed** ✅ |
+| **Day 7** | **Dependency Injection & Middleware**| Built-in DI lifetimes (Transient/Scoped/Singleton), Custom logging middleware | Next Up ⏳ |
 
 ---
 
 ## How to Run
 
-### Run All 37 Unit Tests
+### Run the Web API (with Swagger UI)
 ```powershell
-dotnet test
+dotnet run --project "src/EmployeeManagement.API"
 ```
 
-### Run Automated Demos & Verification Mode
+### Run All 58 Unit Tests
 ```powershell
-dotnet run --project "src/EmployeeManagement.ConsoleApp" -- --demo
+dotnet test
 ```
