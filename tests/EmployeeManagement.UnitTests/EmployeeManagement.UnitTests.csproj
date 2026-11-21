@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EmployeeManagement.Domain\EmployeeManagement.Domain.csproj" />
+    <ProjectReference Include="..\..\src\EmployeeManagement.API\EmployeeManagement.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
