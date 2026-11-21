@@ -1,4 +1,7 @@
 using System.Reflection;
+using EmployeeManagement.API.Configuration;
+using EmployeeManagement.API.Middleware;
+using EmployeeManagement.API.Services.Lifetimes;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Entities;
 using EmployeeManagement.Domain.Repositories;
@@ -8,18 +11,18 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// 1. Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Configure Swagger/OpenAPI with detailed metadata
+// 2. Configure Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
         Title = "Employee & Department Management REST API",
-        Description = "ASP.NET Core Web API implementing RESTful conventions, CRUD operations, DTOs, and OpenAPI documentation.",
+        Description = "ASP.NET Core Web API with REST CRUD, Dependency Injection lifetimes, and custom logging middleware.",
         Contact = new OpenApiContact
         {
             Name = "Shanmukha-Sai",
@@ -28,24 +31,40 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Register Domain Services and Seeded In-Memory Repository (Singleton for consistent in-memory lifecycle)
+// 3. Strongly-Typed Configuration via IOptions Pattern
+builder.Services.Configure<PayrollSettings>(builder.Configuration.GetSection(PayrollSettings.SectionName));
+
+// 4. Register Dependency Injection Service Lifetimes
+// Transient: Fresh instance every time it is injected
+builder.Services.AddTransient<IOperationTransient, OperationService>();
+
+// Scoped: One instance created per HTTP request lifecycle
+builder.Services.AddScoped<IOperationScoped, OperationService>();
+
+// Singleton: Single instance created once for the entire application duration
+builder.Services.AddSingleton<IOperationSingleton, OperationService>();
+
+// Domain Services & Repositories
 var employeeRepository = new InMemoryEmployeeRepository();
 SeedInitialData(employeeRepository);
 
 builder.Services.AddSingleton<IEmployeeRepository>(employeeRepository);
-builder.Services.AddSingleton<IPayrollCalculator, StandardPayrollCalculator>();
-builder.Services.AddSingleton<LinqQueryService>();
+builder.Services.AddScoped<IPayrollCalculator, StandardPayrollCalculator>();
+builder.Services.AddTransient<LinqQueryService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// 5. Configure the HTTP Request Pipeline (Order is critical!)
+// Custom Request Logging Middleware runs earliest to capture total elapsed time and assign X-Correlation-Id
+app.UseRequestLogging();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Management API v1");
-        c.RoutePrefix = string.Empty; // Serve Swagger UI at root: http://localhost:PORT/
+        c.RoutePrefix = string.Empty; // Swagger UI at root
     });
 }
 
