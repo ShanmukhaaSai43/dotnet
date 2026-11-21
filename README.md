@@ -20,18 +20,27 @@ D:\sai\dotnet\
 ├── DAY04_README.md                            # Day 4: Unit Testing (xUnit) & Async C#
 ├── DAY05_GATE1_README.md                      # Day 5: Gate 1 Assessment (Week 1 Passed)
 ├── DAY06_README.md                            # Day 6: ASP.NET Core Web API & REST CRUD
+├── DAY07_README.md                            # Day 7: DI Lifetimes & Custom Middleware
 ├── EmployeeManagement.sln                     # Main Visual Studio Solution
 │
 ├── src/
 │   ├── EmployeeManagement.API/                # ASP.NET Core Web API (Week 2)
 │   │   ├── Controllers/
 │   │   │   ├── EmployeesController.cs         # Full CRUD: GET, POST, PUT, PATCH, DELETE
-│   │   │   └── DepartmentsController.cs       # Department & Payroll summary endpoints
+│   │   │   ├── DepartmentsController.cs       # Department & Payroll summary endpoints
+│   │   │   └── DiagnosticsController.cs       # DI Lifetimes & Configuration diagnostics
+│   │   ├── Middleware/
+│   │   │   └── RequestLoggingMiddleware.cs    # X-Correlation-Id & X-Response-Time-Ms
+│   │   ├── Services/
+│   │   │   └── Lifetimes/
+│   │   │       └── IOperationService.cs       # Transient, Scoped, Singleton contracts
+│   │   ├── Configuration/
+│   │   │   └── PayrollSettings.cs             # IOptions<PayrollSettings> POCO
 │   │   ├── DTOs/
 │   │   │   ├── EmployeeDtos.cs                # Validated Request/Response DTOs
 │   │   │   └── DepartmentDtos.cs              # Department DTOs
 │   │   ├── EmployeeManagement.API.http        # Runnable HTTP requests collection
-│   │   └── Program.cs                         # API Configuration & Swagger UI
+│   │   └── Program.cs                         # Middleware Pipeline & DI Registration
 │   │
 │   ├── EmployeeManagement.Domain/             # Core Domain Model & Business Logic
 │   │   ├── Common/
@@ -81,9 +90,12 @@ D:\sai\dotnet\
 │       └── Program.cs                         # Interactive CLI & Demo runner
 │
 └── tests/
-    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (58 Passing Tests)
+    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (64 Passing Tests)
         ├── ApiTests/
         │   └── EmployeesControllerTests.cs    # Web API CRUD & HTTP status code tests
+        ├── DiAndMiddlewareTests/
+        │   ├── ServiceLifetimeTests.cs        # Transient, Scoped, Singleton tests
+        │   └── RequestLoggingMiddlewareTests.cs # Correlation ID & pipeline tests
         ├── DomainTests/
         │   ├── EmployeeTests.cs               # Pay calculation & validation tests
         │   ├── DepartmentTests.cs             # Encapsulation & budget tests
@@ -110,7 +122,8 @@ D:\sai\dotnet\
 | **Day 4** | **Unit Testing & Async C#** | xUnit suite (27 tests, AAA pattern), Async method with cancellation, LeetCode 121 | **Completed** ✅ |
 | **Day 5** | **Mini-Build Checkpoint (Gate 1)** | Fixed defect #BUG-101, Regression Test suite (51 tests), Code Walkthrough Guide, LeetCode 242 | **GATE 1 PASSED** 🏆 |
 | **Day 6** | **ASP.NET Core REST API Basics**| Web API project, Employees & Departments CRUD (GET/POST/PUT/PATCH/DELETE), DTOs, Swagger, .http file, 58 tests | **Completed** ✅ |
-| **Day 7** | **Dependency Injection & Middleware**| Built-in DI lifetimes (Transient/Scoped/Singleton), Custom logging middleware | Next Up ⏳ |
+| **Day 7** | **Dependency Injection & Middleware**| Built-in DI lifetimes (Transient/Scoped/Singleton), Custom logging middleware, IOptions configuration, 64 tests | **Completed** ✅ |
+| **Day 8** | **Layered Architecture & Validation**| Clean 3-Tier separation (Application/Infrastructure), FluentValidation, Centralized Exception Handling | Next Up ⏳ |
 
 ---
 
@@ -121,7 +134,7 @@ D:\sai\dotnet\
 dotnet run --project "src/EmployeeManagement.API"
 ```
 
-### Run All 58 Unit Tests
+### Run All 64 Unit Tests
 ```powershell
 dotnet test
 ```

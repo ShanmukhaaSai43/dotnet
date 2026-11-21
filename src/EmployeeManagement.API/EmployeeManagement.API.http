@@ -1,6 +1,6 @@
 @EmployeeManagement.API_HostAddress = http://localhost:5200
 
-### 1. GET all employees
+### 1. GET all employees (Check Response Headers: X-Correlation-Id & X-Response-Time-Ms)
 GET {{EmployeeManagement.API_HostAddress}}/api/employees
 Accept: application/json
 
@@ -80,4 +80,12 @@ Accept: application/json
 
 ### 12. GET department payroll report & budget health
 GET {{EmployeeManagement.API_HostAddress}}/api/departments/1/payroll
+Accept: application/json
+
+### 13. [DAY 7] DI LIFETIMES VERIFICATION (Transient vs Scoped vs Singleton GUIDs)
+GET {{EmployeeManagement.API_HostAddress}}/api/diagnostics/lifetimes
+Accept: application/json
+
+### 14. [DAY 7] STRONGLY-TYPED CONFIGURATION (IOptions<PayrollSettings>)
+GET {{EmployeeManagement.API_HostAddress}}/api/diagnostics/configuration
 Accept: application/json
