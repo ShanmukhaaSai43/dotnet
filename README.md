@@ -21,26 +21,36 @@ D:\sai\dotnet\
 ├── DAY05_GATE1_README.md                      # Day 5: Gate 1 Assessment (Week 1 Passed)
 ├── DAY06_README.md                            # Day 6: ASP.NET Core Web API & REST CRUD
 ├── DAY07_README.md                            # Day 7: DI Lifetimes & Custom Middleware
+├── DAY08_README.md                            # Day 8: Layered Architecture & Validation
 ├── EmployeeManagement.sln                     # Main Visual Studio Solution
 │
 ├── src/
-│   ├── EmployeeManagement.API/                # ASP.NET Core Web API (Week 2)
+│   ├── EmployeeManagement.API/                # Presentation Layer (Thin Controllers & Middleware)
 │   │   ├── Controllers/
-│   │   │   ├── EmployeesController.cs         # Full CRUD: GET, POST, PUT, PATCH, DELETE
-│   │   │   ├── DepartmentsController.cs       # Department & Payroll summary endpoints
+│   │   │   ├── EmployeesController.cs         # Thin Controller: Delegates to IEmployeeService
+│   │   │   ├── DepartmentsController.cs       # Thin Controller: Delegates to IDepartmentService
 │   │   │   └── DiagnosticsController.cs       # DI Lifetimes & Configuration diagnostics
 │   │   ├── Middleware/
-│   │   │   └── RequestLoggingMiddleware.cs    # X-Correlation-Id & X-Response-Time-Ms
+│   │   │   ├── RequestLoggingMiddleware.cs    # X-Correlation-Id & X-Response-Time-Ms
+│   │   │   └── GlobalExceptionHandlingMiddleware.cs # RFC 7807 ProblemDetails Exception Handler
 │   │   ├── Services/
 │   │   │   └── Lifetimes/
 │   │   │       └── IOperationService.cs       # Transient, Scoped, Singleton contracts
 │   │   ├── Configuration/
 │   │   │   └── PayrollSettings.cs             # IOptions<PayrollSettings> POCO
 │   │   ├── DTOs/
-│   │   │   ├── EmployeeDtos.cs                # Validated Request/Response DTOs
-│   │   │   └── DepartmentDtos.cs              # Department DTOs
+│   │   │   ├── EmployeeDtos.cs                # Re-exported Application DTOs
+│   │   │   └── DepartmentDtos.cs              # Re-exported Application DTOs
 │   │   ├── EmployeeManagement.API.http        # Runnable HTTP requests collection
 │   │   └── Program.cs                         # Middleware Pipeline & DI Registration
+│   │
+│   ├── EmployeeManagement.Application/        # Application Layer (Use Cases & Validation)
+│   │   ├── Common/Exceptions/                 # AppException, ValidationException, NotFoundException, etc.
+│   │   ├── DTOs/                              # Validated Request/Response DTOs
+│   │   ├── Interfaces/                        # IEmployeeService, IDepartmentService
+│   │   ├── Services/                          # EmployeeService, DepartmentService
+│   │   ├── Validators/                        # FluentValidation Rules (Create, Update, Patch)
+│   │   └── DependencyInjection.cs             # services.AddApplication() Extension
 │   │
 │   ├── EmployeeManagement.Domain/             # Core Domain Model & Business Logic
 │   │   ├── Common/
@@ -90,9 +100,13 @@ D:\sai\dotnet\
 │       └── Program.cs                         # Interactive CLI & Demo runner
 │
 └── tests/
-    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (64 Passing Tests)
+    └── EmployeeManagement.UnitTests/          # xUnit Test Suite (94 Passing Tests)
         ├── ApiTests/
-        │   └── EmployeesControllerTests.cs    # Web API CRUD & HTTP status code tests
+        │   └── EmployeesControllerTests.cs    # Thin Controller async delegation & status tests
+        ├── ApplicationTests/
+        │   ├── CreateEmployeeRequestValidatorTests.cs # FluentValidation rules & boundary tests
+        │   ├── EmployeeServiceTests.cs        # Application Service CRUD, uniqueness & exception tests
+        │   └── GlobalExceptionHandlingMiddlewareTests.cs # RFC 7807 ProblemDetails mapping tests
         ├── DiAndMiddlewareTests/
         │   ├── ServiceLifetimeTests.cs        # Transient, Scoped, Singleton tests
         │   └── RequestLoggingMiddlewareTests.cs # Correlation ID & pipeline tests
@@ -123,7 +137,8 @@ D:\sai\dotnet\
 | **Day 5** | **Mini-Build Checkpoint (Gate 1)** | Fixed defect #BUG-101, Regression Test suite (51 tests), Code Walkthrough Guide, LeetCode 242 | **GATE 1 PASSED** 🏆 |
 | **Day 6** | **ASP.NET Core REST API Basics**| Web API project, Employees & Departments CRUD (GET/POST/PUT/PATCH/DELETE), DTOs, Swagger, .http file, 58 tests | **Completed** ✅ |
 | **Day 7** | **Dependency Injection & Middleware**| Built-in DI lifetimes (Transient/Scoped/Singleton), Custom logging middleware, IOptions configuration, 64 tests | **Completed** ✅ |
-| **Day 8** | **Layered Architecture & Validation**| Clean 3-Tier separation (Application/Infrastructure), FluentValidation, Centralized Exception Handling | Next Up ⏳ |
+| **Day 8** | **Layered Architecture & Validation**| Clean 3-Tier separation (API/Application/Domain), FluentValidation, Global Exception Handler (RFC 7807), 94 tests | **Completed** ✅ |
+| **Day 9** | **EF Core & SQL Integration**| DbContext, Entity configurations, SQL Server migrations, 1-to-many relationships, pagination | Next Up ⏳ |
 
 ---
 
@@ -134,7 +149,7 @@ D:\sai\dotnet\
 dotnet run --project "src/EmployeeManagement.API"
 ```
 
-### Run All 64 Unit Tests
+### Run All 94 Unit Tests
 ```powershell
 dotnet test
 ```

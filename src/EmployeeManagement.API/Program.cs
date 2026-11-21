@@ -1,7 +1,7 @@
-using System.Reflection;
 using EmployeeManagement.API.Configuration;
 using EmployeeManagement.API.Middleware;
 using EmployeeManagement.API.Services.Lifetimes;
+using EmployeeManagement.Application;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Entities;
 using EmployeeManagement.Domain.Repositories;
@@ -11,18 +11,18 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add services to the container
+// 1. Add Controllers
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 
-// 2. Configure Swagger/OpenAPI
-builder.Services.AddSwaggerGen(options =>
+// 2. Add EndpointsApiExplorer & Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
+        Title = "Employee & Department Management API",
         Version = "v1",
-        Title = "Employee & Department Management REST API",
-        Description = "ASP.NET Core Web API with REST CRUD, Dependency Injection lifetimes, and custom logging middleware.",
+        Description = "ASP.NET Core 8.0 REST API with Layered Architecture, FluentValidation, DI Lifetimes, and RFC 7807 Exception Handling.",
         Contact = new OpenApiContact
         {
             Name = "Shanmukha-Sai",
@@ -35,13 +35,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.Configure<PayrollSettings>(builder.Configuration.GetSection(PayrollSettings.SectionName));
 
 // 4. Register Dependency Injection Service Lifetimes
-// Transient: Fresh instance every time it is injected
 builder.Services.AddTransient<IOperationTransient, OperationService>();
-
-// Scoped: One instance created per HTTP request lifecycle
 builder.Services.AddScoped<IOperationScoped, OperationService>();
-
-// Singleton: Single instance created once for the entire application duration
 builder.Services.AddSingleton<IOperationSingleton, OperationService>();
 
 // Domain Services & Repositories
@@ -52,11 +47,17 @@ builder.Services.AddSingleton<IEmployeeRepository>(employeeRepository);
 builder.Services.AddScoped<IPayrollCalculator, StandardPayrollCalculator>();
 builder.Services.AddTransient<LinqQueryService>();
 
+// Register Application Layer (FluentValidation + Services)
+builder.Services.AddApplication();
+
 var app = builder.Build();
 
 // 5. Configure the HTTP Request Pipeline (Order is critical!)
-// Custom Request Logging Middleware runs earliest to capture total elapsed time and assign X-Correlation-Id
+// 1) Custom Request Logging Middleware runs earliest to capture total elapsed time and assign X-Correlation-Id
 app.UseRequestLogging();
+
+// 2) Centralized Global Exception Handler intercepts all domain/app exceptions and formats RFC 7807 ProblemDetails
+app.UseGlobalExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -94,16 +95,26 @@ static void SeedInitialData(IEmployeeRepository repository)
         hourlyRate: 85m,
         hoursWorkedThisMonth: 160,
         contractEndDate: DateTime.UtcNow.AddMonths(6),
-        address: new Address("200 Pine St", "Seattle", "WA", "98101")
+        address: new Address("200 Contract Blvd", "Portland", "OR", "97201")
     ));
 
     repository.Add(new FullTimeEmployee(
         id: 103,
-        name: "Carol Danvers",
-        email: "carol.danvers@company.com",
+        name: "Carol White",
+        email: "carol.white@company.com",
         departmentId: 2,
-        annualSalary: 95000m,
-        monthlyBenefitsAllowance: 600m,
-        address: new Address("300 Cloud Way", "Austin", "TX", "78701")
+        annualSalary: 85000m,
+        monthlyBenefitsAllowance: 500m,
+        address: new Address("300 People St", "Austin", "TX", "73301")
+    ));
+
+    repository.Add(new FullTimeEmployee(
+        id: 104,
+        name: "David Kim",
+        email: "david.kim@company.com",
+        departmentId: 1,
+        annualSalary: 145000m,
+        monthlyBenefitsAllowance: 1000m,
+        address: new Address("400 Cloud Ave", "Bellevue", "WA", "98004")
     ));
 }
