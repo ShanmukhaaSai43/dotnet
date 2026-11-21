@@ -1,0 +1,14 @@
+## .NET Core / C# gitignore
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vscode/
+.vs/
+*.dotCover
+packages/
+*.nupkg
+appsettings.Development.json
+TestResults/
