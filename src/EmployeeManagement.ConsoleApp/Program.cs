@@ -4,6 +4,7 @@ using EmployeeManagement.ConsoleApp.LeetCode;
 using EmployeeManagement.ConsoleApp.Models;
 using EmployeeManagement.ConsoleApp.Services;
 using EmployeeManagement.Domain.LeetCode;
+using EmployeeManagement.Domain.Services;
 
 namespace EmployeeManagement.ConsoleApp;
 
@@ -13,7 +14,7 @@ public class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Console.WriteLine("====================================================================");
-        Console.WriteLine("   .NET Core Engineering: Day 4 - Unit Testing & Async C#            ");
+        Console.WriteLine("   .NET Core Engineering: Day 5 - Gate 1 Checkpoint & Mini-Build    ");
         Console.WriteLine("   Domain: Employee & Department Management System                  ");
         Console.WriteLine("====================================================================\n");
 
@@ -27,10 +28,12 @@ public class Program
             OopAndSolidDemo.RunAllDemos();
             LinqAndModernCSharpDemo.RunAllDemos();
             await AsyncAndToolingDemo.RunAllDemosAsync();
+            RunGate1RegressionDemo();
             ConcatenationOfArraySolution.RunTests();
             NumberOfStepsToReduceZeroSolution.RunTests();
             ContainsDuplicateSolution.RunTests();
             BestTimeToBuyAndSellStockSolution.RunTests();
+            ValidAnagramSolution.RunTests();
             return;
         }
 
@@ -47,13 +50,15 @@ public class Program
             Console.WriteLine("6. Run Day 2 OOP & SOLID Demos (Polymorphism, Records, Interfaces)");
             Console.WriteLine("7. Run Day 3 Modern C# & LINQ Demos (10 Queries, Deferred Execution)");
             Console.WriteLine("8. Run Day 4 Async & Cancellation Demos (Task, CancellationToken, WhenAll)");
-            Console.WriteLine("9. Run Day 1 LeetCode: 1929. Concatenation of Array");
-            Console.WriteLine("10. Run Day 2 LeetCode: 1342. Number of Steps to Reduce to Zero");
-            Console.WriteLine("11. Run Day 3 LeetCode: 217. Contains Duplicate");
-            Console.WriteLine("12. Run Day 4 LeetCode: 121. Best Time to Buy and Sell Stock");
-            Console.WriteLine("13. Run Full Automated Verification (--demo)");
+            Console.WriteLine("9. Run Day 5 Gate 1 Regression Test Demo (Injected Defect BUG-101 Fix)");
+            Console.WriteLine("10. Run Day 1 LeetCode: 1929. Concatenation of Array");
+            Console.WriteLine("11. Run Day 2 LeetCode: 1342. Number of Steps to Reduce to Zero");
+            Console.WriteLine("12. Run Day 3 LeetCode: 217. Contains Duplicate");
+            Console.WriteLine("13. Run Day 4 LeetCode: 121. Best Time to Buy and Sell Stock");
+            Console.WriteLine("14. Run Day 5 LeetCode: 242. Valid Anagram");
+            Console.WriteLine("15. Run Full Gate 1 Checkpoint Automated Verification (--demo)");
             Console.WriteLine("0. Exit");
-            Console.Write("\nEnter choice (0-13): ");
+            Console.Write("\nEnter choice (0-15): ");
 
             string? choice = Console.ReadLine();
             Console.WriteLine();
@@ -85,37 +90,68 @@ public class Program
                     await AsyncAndToolingDemo.RunAllDemosAsync();
                     break;
                 case "9":
-                    ConcatenationOfArraySolution.RunTests();
+                    RunGate1RegressionDemo();
                     break;
                 case "10":
-                    NumberOfStepsToReduceZeroSolution.RunTests();
+                    ConcatenationOfArraySolution.RunTests();
                     break;
                 case "11":
-                    ContainsDuplicateSolution.RunTests();
+                    NumberOfStepsToReduceZeroSolution.RunTests();
                     break;
                 case "12":
-                    BestTimeToBuyAndSellStockSolution.RunTests();
+                    ContainsDuplicateSolution.RunTests();
                     break;
                 case "13":
+                    BestTimeToBuyAndSellStockSolution.RunTests();
+                    break;
+                case "14":
+                    ValidAnagramSolution.RunTests();
+                    break;
+                case "15":
                     RunAutomatedSampleScenarios(employeeService);
                     TypeSemanticsDemo.RunAllDemos();
                     OopAndSolidDemo.RunAllDemos();
                     LinqAndModernCSharpDemo.RunAllDemos();
                     await AsyncAndToolingDemo.RunAllDemosAsync();
+                    RunGate1RegressionDemo();
                     ConcatenationOfArraySolution.RunTests();
                     NumberOfStepsToReduceZeroSolution.RunTests();
                     ContainsDuplicateSolution.RunTests();
                     BestTimeToBuyAndSellStockSolution.RunTests();
+                    ValidAnagramSolution.RunTests();
                     break;
                 case "0":
                     running = false;
                     Console.WriteLine("Exiting. Have a great day!");
                     break;
                 default:
-                    Console.WriteLine("Invalid option. Please enter a number between 0 and 13.");
+                    Console.WriteLine("Invalid option. Please enter a number between 0 and 15.");
                     break;
             }
         }
+    }
+
+    public static void RunGate1RegressionDemo()
+    {
+        Console.WriteLine("\n=======================================================");
+        Console.WriteLine("    DAY 5 DEMO: GATE 1 REGRESSION PROOF (BUG-101)      ");
+        Console.WriteLine("=======================================================\n");
+
+        var compService = new CompensationService();
+        decimal annualBonus = 12000m;
+        int monthsWorked = 6;
+
+        Console.WriteLine("Scenario: Calculating Prorated Bonus for Mid-Year Hire (6 of 12 months worked)...");
+        Console.WriteLine($"  Annual Target Bonus: {annualBonus:C}");
+        Console.WriteLine($"  Months Completed:    {monthsWorked} / 12");
+
+        decimal calculated = compService.CalculateProratedBonus(annualBonus, monthsWorked);
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"[REGRESSION VERIFIED]: Calculated Prorated Bonus: {calculated:C} (Expected: $6,000.00)");
+        Console.ResetColor();
+        Console.WriteLine("In the buggy code, integer division (6 / 12) evaluated to 0, wiping out bonuses to $0.00.");
+        Console.WriteLine("With the fix (6 / 12.0m), precision is maintained.\n");
     }
 
     public static void RunAutomatedSampleScenarios(EmployeeService service)
